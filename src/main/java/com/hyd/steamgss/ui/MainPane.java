@@ -40,8 +40,8 @@ public class MainPane extends BorderPane {
 
     private HBox configButtonBar() {
         HBox hbox = Fx.hbox(
-                Fx.button("游戏存档备份(_B)"),
-                Fx.button("游戏存档恢复(_R)")
+                Fx.button("游戏存档备份(_B)", GameConfigurationService::backupCurrent),
+                Fx.button("游戏存档恢复(_R)", GameConfigurationService::restoreCurrent)
         );
         hbox.setPadding(new Insets(0));
         return hbox;

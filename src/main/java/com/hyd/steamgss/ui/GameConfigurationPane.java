@@ -95,6 +95,8 @@ public class GameConfigurationPane extends GridPane {
 
     public void showGameConfiguration(GameConfiguration gc) {
         this.txtGameName.setText(gc.getName());
+        this.ffGameSaving.setPath(gc.getLocalSavingPath());
+        this.ffBackup.setPath(gc.getBackupPath());
     }
 
     public void clear() {

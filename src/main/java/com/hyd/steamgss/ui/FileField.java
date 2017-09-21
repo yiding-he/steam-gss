@@ -1,5 +1,6 @@
 package com.hyd.steamgss.ui;
 
+import com.hyd.steamgss.utils.Pth;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -44,6 +45,17 @@ public class FileField extends HBox {
                 updateChosenFile(file);
             }
         });
+
+        textField.textProperty().addListener((_ob, _old, _new) -> {
+            if (!Pth.fileExists(_new)) {
+                this.chosenFile = null;
+            } else {
+                this.chosenFile = new File(_new);
+                if (onChosenFileChanged != null) {
+                    onChosenFileChanged.run();
+                }
+            }
+        });
     }
 
     private void updateChosenFile(File file) {
@@ -56,5 +68,12 @@ public class FileField extends HBox {
 
     public File getChosenFile() {
         return chosenFile;
+    }
+
+    public void setPath(String path) {
+        if (Pth.fileExists(path)) {
+            this.chosenFile = new File(path);
+        }
+        this.textField.setText(path);
     }
 }

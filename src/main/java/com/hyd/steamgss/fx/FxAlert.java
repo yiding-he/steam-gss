@@ -49,4 +49,8 @@ public class FxAlert {
         return alert(AlertType.CONFIRMATION,
                 "确认", confirm, ButtonType.YES, ButtonType.NO) == ButtonType.YES;
     }
+
+    public static void info(String message) {
+        alert(AlertType.INFORMATION, "消息", message, ButtonType.OK);
+    }
 }
