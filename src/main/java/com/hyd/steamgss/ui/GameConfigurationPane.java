@@ -1,6 +1,6 @@
 package com.hyd.steamgss.ui;
 
-import com.hyd.steamgss.Fx;
+import com.hyd.steamgss.fx.Fx;
 import com.hyd.steamgss.items.GameConfiguration;
 import com.hyd.steamgss.service.GameConfigurationService;
 import javafx.geometry.HPos;
@@ -9,8 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author yidin

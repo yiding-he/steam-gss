@@ -3,6 +3,7 @@ package com.hyd.steamgss.ui;
 
 import com.hyd.steamgss.items.GameConfiguration;
 import com.hyd.steamgss.service.GameConfigurationService;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
@@ -25,6 +26,15 @@ public class GameList extends ListView<GameConfiguration> {
                 GameConfigurationService.clearCurrentShowing();
             }
         });
+
+        this.getItems().addListener((ListChangeListener<GameConfiguration>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    GameConfiguration added = c.getAddedSubList().get(0);
+                    getSelectionModel().select(added);
+                }
+            }
+        });
     }
 
     private void setupCellDisplay() {
@@ -34,6 +44,8 @@ public class GameList extends ListView<GameConfiguration> {
                 super.updateItem(c, empty);
                 if (!empty) {
                     setText(c.getName());
+                } else {
+                    setText(null);
                 }
             }
         });

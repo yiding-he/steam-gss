@@ -1,4 +1,4 @@
-package com.hyd.steamgss;
+package com.hyd.steamgss.fx;
 
 
 import javafx.scene.control.Button;

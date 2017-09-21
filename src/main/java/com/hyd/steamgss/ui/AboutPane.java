@@ -1,5 +1,7 @@
 package com.hyd.steamgss.ui;
 
+import com.hyd.steamgss.fx.Fx;
+import com.hyd.steamgss.fx.FxAlert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
@@ -9,6 +11,11 @@ import javafx.scene.layout.BorderPane;
 public class AboutPane extends BorderPane {
 
     public AboutPane() {
-        setCenter(new Label("About..."));
+        setCenter(Fx.label("About..."));
+        setBottom(Fx.button("Test Error", this::textShowError));
+    }
+
+    private void textShowError() {
+        FxAlert.error("A test error message.");
     }
 }
