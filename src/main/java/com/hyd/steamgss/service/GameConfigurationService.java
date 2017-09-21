@@ -10,17 +10,16 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author yiding_he
  */
 public class GameConfigurationService {
 
-    private static ObservableList<GameConfiguration>
-            configurations = FXCollections.observableArrayList();
+    private static ObservableList<GameConfiguration> configurations = FXCollections.observableArrayList();
 
     private static GameConfiguration currentConfiguration;
 
@@ -38,6 +37,15 @@ public class GameConfigurationService {
 
     public static void setGameConfigurationPane(GameConfigurationPane gameConfigurationPane) {
         GameConfigurationService.gameConfigurationPane = gameConfigurationPane;
+    }
+
+    public static void updateCurrentConfig(Consumer<GameConfiguration> configurationConsumer) {
+        if (currentConfiguration == null) {
+            return;
+        }
+
+        configurationConsumer.accept(currentConfiguration);
+
     }
 
     public static ObservableList<GameConfiguration> getConfigurations() {

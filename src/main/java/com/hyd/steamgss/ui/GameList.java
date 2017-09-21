@@ -43,8 +43,9 @@ public class GameList extends ListView<GameConfiguration> {
             protected void updateItem(GameConfiguration c, boolean empty) {
                 super.updateItem(c, empty);
                 if (!empty) {
-                    setText(c.getName());
+                    textProperty().bind(c.nameProperty());
                 } else {
+                    textProperty().unbind();
                     setText(null);
                 }
             }

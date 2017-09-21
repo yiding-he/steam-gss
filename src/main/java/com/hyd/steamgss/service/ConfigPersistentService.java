@@ -27,6 +27,7 @@ public class ConfigPersistentService {
             String json = new String(Files.readAllBytes(configPath), "UTF-8");
             return JSON.parseArray(json, GameConfiguration.class);
         } catch (Exception e) {
+            e.printStackTrace();
             FxAlert.error("无法读取配置：" + e);
             return Collections.emptyList();
         }
@@ -42,6 +43,7 @@ public class ConfigPersistentService {
             String json = JSON.toJSONString(configurationList);
             Files.write(configPath, json.getBytes("UTF-8"));
         } catch (Exception e) {
+            e.printStackTrace();
             FxAlert.error("无法保存配置：" + e);
         }
     }

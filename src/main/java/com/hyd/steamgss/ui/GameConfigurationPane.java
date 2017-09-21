@@ -61,21 +61,31 @@ public class GameConfigurationPane extends GridPane {
 
     private void setupEvents() {
         txtGameName.focusedProperty().addListener((_ob, _old, _new) -> {
+            if (muted) {
+                return;
+            }
             if (_old && !_new) {
-                GameConfigurationService.getCurrentConfiguration().setName(txtGameName.getText());
+                GameConfigurationService.updateCurrentConfig(
+                        c -> c.setName(txtGameName.getText()));
                 ConfigPersistentService.save();
             }
         });
 
         ffGameSaving.setOnChosenFileChanged(() -> {
-            GameConfigurationService.getCurrentConfiguration()
-                    .setLocalSavingPath(ffGameSaving.getChosenFile().getAbsolutePath());
+            if (muted) {
+                return;
+            }
+            GameConfigurationService.updateCurrentConfig(
+                    c -> c.setLocalSavingPath(ffGameSaving.getChosenFile().getAbsolutePath()));
             ConfigPersistentService.save();
         });
 
         ffBackup.setOnChosenFileChanged(() -> {
-            GameConfigurationService.getCurrentConfiguration()
-                    .setBackupPath(ffBackup.getChosenFile().getAbsolutePath());
+            if (muted) {
+                return;
+            }
+            GameConfigurationService.updateCurrentConfig(
+                    c -> c.setBackupPath(ffBackup.getChosenFile().getAbsolutePath()));
             ConfigPersistentService.save();
         });
     }
@@ -93,10 +103,14 @@ public class GameConfigurationPane extends GridPane {
         return new ColumnConstraints();
     }
 
+    boolean muted = false;
+
     public void showGameConfiguration(GameConfiguration gc) {
+        this.muted = true;
         this.txtGameName.setText(gc.getName());
         this.ffGameSaving.setPath(gc.getLocalSavingPath());
         this.ffBackup.setPath(gc.getBackupPath());
+        this.muted = false;
     }
 
     public void clear() {
