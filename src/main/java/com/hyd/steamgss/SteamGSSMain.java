@@ -10,10 +10,16 @@ import javafx.stage.Stage;
  */
 public class SteamGSSMain extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setScene(new Scene(new MainPane(), 800, 600));
         primaryStage.getIcons().add(Icons.LOGO);
         primaryStage.setTitle(App.NAME);
+        primaryStage.setOnShown(event -> App.init());
         primaryStage.show();
+        System.out.println("__OK__");
     }
 }

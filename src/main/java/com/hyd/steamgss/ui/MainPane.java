@@ -1,6 +1,7 @@
 package com.hyd.steamgss.ui;
 
 import com.hyd.steamgss.Fx;
+import com.hyd.steamgss.service.GameConfigurationService;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -44,10 +45,14 @@ public class MainPane extends BorderPane {
 
     private HBox actionButtonsBar() {
         HBox hBox = new HBox(10,
-                Fx.button("备份存档(_B)..."),
-                Fx.button("还原存档(_R)...")
+                Fx.button("添加配置(_A)", this::newConfiguration),
+                Fx.button("删除(_D)")
         );
         hBox.setMinWidth(USE_PREF_SIZE);
         return hBox;
+    }
+
+    private void newConfiguration() {
+        GameConfigurationService.newConfiguration();
     }
 }
