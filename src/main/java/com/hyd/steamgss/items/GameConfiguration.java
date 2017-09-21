@@ -10,4 +10,7 @@ public class GameConfiguration {
 
     private String name;
 
+    private String localSavingPath;
+
+    private String backupPath;
 }

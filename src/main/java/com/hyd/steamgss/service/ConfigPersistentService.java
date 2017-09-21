@@ -32,8 +32,9 @@ public class ConfigPersistentService {
         }
     }
 
-    public static void save(List<GameConfiguration> configurationList) {
+    public static void save() {
         try {
+            List<GameConfiguration> configurationList = GameConfigurationService.getConfigurations();
             Path configPath = Paths.get("config.json");
             if (!Files.exists(configPath)) {
                 Files.createFile(configPath);

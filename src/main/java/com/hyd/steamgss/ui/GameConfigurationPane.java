@@ -2,13 +2,14 @@ package com.hyd.steamgss.ui;
 
 import com.hyd.steamgss.fx.Fx;
 import com.hyd.steamgss.items.GameConfiguration;
+import com.hyd.steamgss.service.ConfigPersistentService;
 import com.hyd.steamgss.service.GameConfigurationService;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 
 /**
  * @author yidin
@@ -16,6 +17,10 @@ import javafx.scene.layout.Priority;
 public class GameConfigurationPane extends GridPane {
 
     private final TextField txtGameName = Fx.textField();
+
+    private final FileField ffGameSaving = Fx.file();
+
+    private final FileField ffBackup = Fx.file();
 
     public GameConfigurationPane() {
         GameConfigurationService.setGameConfigurationPane(this);
@@ -40,9 +45,39 @@ public class GameConfigurationPane extends GridPane {
         this.add(txtGameName, 1, row);
         row++;
 
+        this.add(Fx.label("存档目录："), 0, row);
+        this.add(ffGameSaving, 1, row);
+        row++;
+
+        this.add(Fx.label("存档备份目录："), 0, row);
+        this.add(ffBackup, 1, row);
+
         ///////////////////////////////////////////////
 
         GridPane.setHgrow(txtGameName, Priority.ALWAYS);
+
+        setupEvents();
+    }
+
+    private void setupEvents() {
+        txtGameName.focusedProperty().addListener((_ob, _old, _new) -> {
+            if (_old && !_new) {
+                GameConfigurationService.getCurrentConfiguration().setName(txtGameName.getText());
+                ConfigPersistentService.save();
+            }
+        });
+
+        ffGameSaving.setOnChosenFileChanged(() -> {
+            GameConfigurationService.getCurrentConfiguration()
+                    .setLocalSavingPath(ffGameSaving.getChosenFile().getAbsolutePath());
+            ConfigPersistentService.save();
+        });
+
+        ffBackup.setOnChosenFileChanged(() -> {
+            GameConfigurationService.getCurrentConfiguration()
+                    .setBackupPath(ffBackup.getChosenFile().getAbsolutePath());
+            ConfigPersistentService.save();
+        });
     }
 
     private ColumnConstraints fieldCons() {

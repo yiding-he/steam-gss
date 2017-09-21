@@ -21,8 +21,12 @@ public class GameConfigurationService {
 
     static {
         ListChangeListener<GameConfiguration> listener =
-                c -> ConfigPersistentService.save(configurations);
+                c -> ConfigPersistentService.save();
         configurations.addListener(listener);
+    }
+
+    public static GameConfiguration getCurrentConfiguration() {
+        return currentConfiguration;
     }
 
     public static void setGameConfigurationPane(GameConfigurationPane gameConfigurationPane) {

@@ -1,10 +1,16 @@
 package com.hyd.steamgss.fx;
 
 
+import com.hyd.steamgss.ui.FileField;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -12,6 +18,8 @@ import javafx.scene.text.FontWeight;
  * @author yidin
  */
 public class Fx {
+
+    public static final Insets PADDING = new Insets(10);
 
     public static Button button(String text) {
         return button(text, null);
@@ -44,5 +52,21 @@ public class Fx {
 
     public static TextField textField() {
         return new TextField();
+    }
+
+    public static HBox hbox(Node... children) {
+        HBox hBox = new HBox(10, children);
+        hBox.setPadding(PADDING);
+        return hBox;
+    }
+
+    public static VBox vbox(Node... nodes) {
+        VBox vBox = new VBox(10, nodes);
+        vBox.setPadding(PADDING);
+        return vBox;
+    }
+
+    public static FileField file() {
+        return new FileField();
     }
 }
