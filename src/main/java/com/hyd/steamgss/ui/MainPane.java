@@ -1,12 +1,16 @@
 package com.hyd.steamgss.ui;
 
+import com.hyd.steamgss.Icons;
 import com.hyd.steamgss.fx.Fx;
 import com.hyd.steamgss.service.GameConfigurationService;
+import com.hyd.steamgss.service.GameSavingService;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -39,10 +43,18 @@ public class MainPane extends BorderPane {
     }
 
     private HBox configButtonBar() {
-        HBox hbox = Fx.hbox(
-                Fx.button("游戏存档备份(_B)", GameConfigurationService::backupCurrent),
-                Fx.button("游戏存档恢复(_R)", GameConfigurationService::restoreCurrent)
-        );
+
+        Button backupButton = Fx.button("存档备份(_B)", "big-button", GameConfigurationService::backupCurrent);
+        Button restoreButton = Fx.button("存档恢复(_R)", "big-button", GameConfigurationService::restoreCurrent);
+        ImageView loadingImageView = new ImageView(Icons.LOADING);
+
+        GameSavingService.setLoadingImageView(loadingImageView);
+        GameSavingService.setBackupButton(backupButton);
+        GameSavingService.setRestoreButton(restoreButton);
+
+        loadingImageView.setVisible(false);
+
+        HBox hbox = Fx.hbox(backupButton, restoreButton, loadingImageView);
         hbox.setPadding(new Insets(0));
         return hbox;
     }

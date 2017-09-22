@@ -1,10 +1,7 @@
 package com.hyd.steamgss.utils;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class CopyDir extends SimpleFileVisitor<Path> {
@@ -24,7 +21,7 @@ public class CopyDir extends SimpleFileVisitor<Path> {
 
         try {
             Path targetFile = targetDir.resolve(sourceDir.relativize(file));
-            Files.copy(file, targetFile);
+            Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
             System.err.println(ex);
         }
@@ -37,7 +34,7 @@ public class CopyDir extends SimpleFileVisitor<Path> {
                                              BasicFileAttributes attributes) {
         try {
             Path newDir = targetDir.resolve(sourceDir.relativize(dir));
-            Files.createDirectory(newDir);
+            Files.createDirectories(newDir);
         } catch (IOException ex) {
             System.err.println(ex);
         }

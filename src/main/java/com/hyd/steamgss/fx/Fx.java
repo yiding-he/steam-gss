@@ -2,6 +2,7 @@ package com.hyd.steamgss.fx;
 
 
 import com.hyd.steamgss.ui.FileField;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -22,13 +23,20 @@ public class Fx {
     public static final Insets PADDING = new Insets(10);
 
     public static Button button(String text) {
-        return button(text, null);
+        return button(text, null, null);
     }
 
     public static Button button(String text, Runnable action) {
+        return button(text, null, action);
+    }
+
+    public static Button button(String text, String styleClass, Runnable action) {
         Button button = new Button(text);
         if (action != null) {
             button.setOnAction(e -> action.run());
+        }
+        if (styleClass != null) {
+            button.getStyleClass().add(styleClass);
         }
         return button;
     }
@@ -68,5 +76,13 @@ public class Fx {
 
     public static FileField file() {
         return new FileField();
+    }
+
+    public static void ui(Runnable runnable) {
+        if (Platform.isFxApplicationThread()) {
+            runnable.run();
+        } else {
+            Platform.runLater(runnable);
+        }
     }
 }
