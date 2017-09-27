@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author yiding_he
@@ -45,40 +46,48 @@ public class GameSavingService {
         });
     }
 
-    public static void backupSaving(GameConfiguration configuration) {
-        if (configuration == null) {
+    public static void backupSaving(List<GameConfiguration> configurations) {
+
+        if (configurations == null || configurations.isEmpty()) {
             FxAlert.error("没有选择要备份的游戏");
         }
 
-        String backupPath = configuration.getBackupPath();
-        String savingPath = configuration.getLocalSavingPath();
+        for (GameConfiguration configuration : configurations) {
+            String backupPath = configuration.getBackupPath();
+            String savingPath = configuration.getLocalSavingPath();
 
-        if (Str.isBlank(backupPath)) {
-            FxAlert.error("没有选择备份目录");
-            return;
+            if (Str.isBlank(backupPath)) {
+                FxAlert.error("'" + configuration.getName() + "'没有选择备份目录");
+                return;
+            }
+
+            if (Str.isBlank(savingPath)) {
+                FxAlert.error("'" + configuration.getName() + "'没有选择存档目录");
+                return;
+            }
+
+            if (!Pth.fileExists(savingPath)) {
+                FxAlert.error("'" + configuration.getName() + "'存档没有找到");
+                return;
+            }
+
+            if (!Pth.getOrCreateDir(backupPath)) {
+                FxAlert.error("'" + configuration.getName() + "'备份目录无法创建");
+                return;
+            }
         }
 
-        if (Str.isBlank(savingPath)) {
-            FxAlert.error("没有选择存档目录");
-            return;
-        }
-
-        if (!Pth.fileExists(savingPath)) {
-            FxAlert.error("存档没有找到");
-            return;
-        }
-
-        if (!Pth.getOrCreateDir(backupPath)) {
-            FxAlert.error("备份目录无法创建");
-            return;
-        }
 
         Runnable task = () -> {
 
             serviceRunning(true);
 
             try {
-                Pth.copyDir(savingPath, backupPath);
+                for (GameConfiguration configuration : configurations) {
+                    String backupPath = configuration.getBackupPath();
+                    String savingPath = configuration.getLocalSavingPath();
+                    Pth.copyDir(savingPath, backupPath);
+                }
                 FxAlert.info("备份已完成。");
             } catch (IOException e) {
                 FxAlert.error("备份失败：" + e);
@@ -90,32 +99,34 @@ public class GameSavingService {
         new Thread(task).start();
     }
 
-    public static void restoreSaving(GameConfiguration configuration) {
-        if (configuration == null) {
+    public static void restoreSaving(List<GameConfiguration> configurations) {
+        if (configurations == null || configurations.isEmpty()) {
             FxAlert.error("没有选择要备份的游戏");
         }
 
-        String backupPath = configuration.getBackupPath();
-        String savingPath = configuration.getLocalSavingPath();
+        for (GameConfiguration configuration : configurations) {
+            String backupPath = configuration.getBackupPath();
+            String savingPath = configuration.getLocalSavingPath();
 
-        if (Str.isBlank(backupPath)) {
-            FxAlert.error("没有选择备份目录");
-            return;
-        }
+            if (Str.isBlank(backupPath)) {
+                FxAlert.error("'" + configuration.getName() + "'没有选择备份目录");
+                return;
+            }
 
-        if (Str.isBlank(savingPath)) {
-            FxAlert.error("没有选择存档目录");
-            return;
-        }
+            if (Str.isBlank(savingPath)) {
+                FxAlert.error("'" + configuration.getName() + "'没有选择存档目录");
+                return;
+            }
 
-        if (!Pth.fileExists(backupPath)) {
-            FxAlert.error("备份没有找到");
-            return;
-        }
+            if (!Pth.fileExists(backupPath)) {
+                FxAlert.error("'" + configuration.getName() + "'备份没有找到");
+                return;
+            }
 
-        if (!Pth.getOrCreateDir(savingPath)) {
-            FxAlert.error("存档目录无法创建");
-            return;
+            if (!Pth.getOrCreateDir(savingPath)) {
+                FxAlert.error("'" + configuration.getName() + "'存档目录无法创建");
+                return;
+            }
         }
 
         Runnable task = () -> {
@@ -123,7 +134,11 @@ public class GameSavingService {
             serviceRunning(true);
 
             try {
-                Pth.copyDir(backupPath, savingPath);
+                for (GameConfiguration configuration : configurations) {
+                    String backupPath = configuration.getBackupPath();
+                    String savingPath = configuration.getLocalSavingPath();
+                    Pth.copyDir(backupPath, savingPath);
+                }
                 FxAlert.info("存档已还原。");
             } catch (IOException e) {
                 FxAlert.error("还原失败：" + e);

@@ -5,7 +5,6 @@ import com.hyd.steamgss.fx.Fx;
 import com.hyd.steamgss.service.GameConfigurationService;
 import com.hyd.steamgss.service.GameSavingService;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -63,13 +62,21 @@ public class MainPane extends BorderPane {
         GameList gameList = new GameList();
         VBox.setVgrow(gameList, Priority.ALWAYS);
 
-        HBox hBox = gameListButtonsBar();
+        HBox gameListButtonsBar = gameListButtonsBar();
+        HBox allGamesButtonBar = allGamesButtonBar();
         VBox vBox = new VBox(10,
-                new Label("游戏列表："), gameList, hBox);
+                new Label("游戏列表："), gameList, gameListButtonsBar, allGamesButtonBar);
 
-        vBox.maxWidthProperty().bind(hBox.minWidthProperty());
+        vBox.maxWidthProperty().bind(gameListButtonsBar.minWidthProperty());
         vBox.setPadding(new Insets(10));
         return vBox;
+    }
+
+    private HBox allGamesButtonBar() {
+        return new HBox(10,
+                Fx.button("全部备份", this::backupAll),
+                Fx.button("全部恢复", this::restoreAll)
+        );
     }
 
     private HBox gameListButtonsBar() {
@@ -79,6 +86,14 @@ public class MainPane extends BorderPane {
         );
         hBox.setMinWidth(USE_PREF_SIZE);
         return hBox;
+    }
+
+    private void restoreAll() {
+        GameConfigurationService.restoreAll();
+    }
+
+    private void backupAll() {
+        GameConfigurationService.backupAll();
     }
 
     private void deleteConfiguration() {

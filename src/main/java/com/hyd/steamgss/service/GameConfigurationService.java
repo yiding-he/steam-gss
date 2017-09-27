@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
+import java.util.Collections;
 import java.util.function.Consumer;
 
 /**
@@ -92,10 +93,18 @@ public class GameConfigurationService {
     }
 
     public static void backupCurrent() {
-        GameSavingService.backupSaving(currentConfiguration);
+        GameSavingService.backupSaving(Collections.singletonList(currentConfiguration));
     }
 
     public static void restoreCurrent() {
-        GameSavingService.restoreSaving(currentConfiguration);
+        GameSavingService.restoreSaving(Collections.singletonList(currentConfiguration));
+    }
+
+    public static void restoreAll() {
+        GameSavingService.restoreSaving(configurations);
+    }
+
+    public static void backupAll() {
+        GameSavingService.backupSaving(configurations);
     }
 }
