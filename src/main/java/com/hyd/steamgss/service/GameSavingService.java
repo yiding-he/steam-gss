@@ -18,6 +18,8 @@ public class GameSavingService {
 
     private static ImageView loadingImageView;
 
+    private static ImageView loadingAllImageView;
+
     private static Button backupButton;
 
     private static Button restoreButton;
@@ -30,6 +32,10 @@ public class GameSavingService {
         GameSavingService.restoreButton = restoreButton;
     }
 
+    public static void setLoadingAllImageView(ImageView loadingAllImageView) {
+        GameSavingService.loadingAllImageView = loadingAllImageView;
+    }
+
     public static void setLoadingImageView(ImageView loadingImageView) {
         GameSavingService.loadingImageView = loadingImageView;
     }
@@ -39,7 +45,7 @@ public class GameSavingService {
         restoreButton.setDisable(disable);
     }
 
-    private static void serviceRunning(boolean running) {
+    private static void serviceRunning(boolean running, ImageView loadingImageView) {
         Fx.ui(() -> {
             loadingImageView.setVisible(running);
             disableButtons(running);
@@ -50,6 +56,7 @@ public class GameSavingService {
 
         if (configurations == null || configurations.isEmpty()) {
             FxAlert.error("没有选择要备份的游戏");
+            return;
         }
 
         for (GameConfiguration configuration : configurations) {
@@ -77,10 +84,10 @@ public class GameSavingService {
             }
         }
 
-
+        ImageView imageView = configurations.size() > 1 ? loadingAllImageView : loadingImageView;
         Runnable task = () -> {
 
-            serviceRunning(true);
+            serviceRunning(true, imageView);
 
             try {
                 for (GameConfiguration configuration : configurations) {
@@ -92,7 +99,7 @@ public class GameSavingService {
             } catch (IOException e) {
                 FxAlert.error("备份失败：" + e);
             } finally {
-                serviceRunning(false);
+                serviceRunning(false, imageView);
             }
         };
 
@@ -102,6 +109,7 @@ public class GameSavingService {
     public static void restoreSaving(List<GameConfiguration> configurations) {
         if (configurations == null || configurations.isEmpty()) {
             FxAlert.error("没有选择要备份的游戏");
+            return;
         }
 
         for (GameConfiguration configuration : configurations) {
@@ -129,9 +137,10 @@ public class GameSavingService {
             }
         }
 
+        ImageView imageView = configurations.size() > 1 ? loadingAllImageView : loadingImageView;
         Runnable task = () -> {
 
-            serviceRunning(true);
+            serviceRunning(true, imageView);
 
             try {
                 for (GameConfiguration configuration : configurations) {
@@ -143,7 +152,7 @@ public class GameSavingService {
             } catch (IOException e) {
                 FxAlert.error("还原失败：" + e);
             } finally {
-                serviceRunning(false);
+                serviceRunning(false, imageView);
             }
         };
 

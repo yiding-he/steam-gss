@@ -5,6 +5,7 @@ import com.hyd.steamgss.fx.Fx;
 import com.hyd.steamgss.service.GameConfigurationService;
 import com.hyd.steamgss.service.GameSavingService;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -45,17 +46,24 @@ public class MainPane extends BorderPane {
 
         Button backupButton = Fx.button("存档备份(_B)", "big-button", GameConfigurationService::backupCurrent);
         Button restoreButton = Fx.button("存档恢复(_R)", "big-button", GameConfigurationService::restoreCurrent);
-        ImageView loadingImageView = new ImageView(Icons.LOADING);
+        ImageView loadingImageView = createLoading();
 
         GameSavingService.setLoadingImageView(loadingImageView);
         GameSavingService.setBackupButton(backupButton);
         GameSavingService.setRestoreButton(restoreButton);
 
-        loadingImageView.setVisible(false);
-
         HBox hbox = Fx.hbox(backupButton, restoreButton, loadingImageView);
+        hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setPadding(new Insets(0));
         return hbox;
+    }
+
+    private ImageView createLoading() {
+        ImageView loadingImageView = new ImageView(Icons.LOADING);
+        loadingImageView.setFitWidth(18);
+        loadingImageView.setFitHeight(18);
+        loadingImageView.setVisible(false);
+        return loadingImageView;
     }
 
     private VBox createLeft() {
@@ -73,10 +81,17 @@ public class MainPane extends BorderPane {
     }
 
     private HBox allGamesButtonBar() {
-        return new HBox(10,
+
+        ImageView loadingAll = createLoading();
+        GameSavingService.setLoadingAllImageView(loadingAll);
+
+        HBox hBox = new HBox(10,
                 Fx.button("全部备份", this::backupAll),
-                Fx.button("全部恢复", this::restoreAll)
+                Fx.button("全部恢复", this::restoreAll),
+                loadingAll
         );
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        return hBox;
     }
 
     private HBox gameListButtonsBar() {

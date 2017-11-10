@@ -3,9 +3,7 @@ package com.hyd.steamgss.service;
 import com.alibaba.fastjson.JSON;
 import com.hyd.steamgss.fx.FxAlert;
 import com.hyd.steamgss.items.GameConfiguration;
-import javafx.collections.ObservableList;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,8 +15,11 @@ import java.util.List;
  */
 public class ConfigPersistentService {
 
+    public static final String CONFIG_PATH =
+            System.getProperty("config") != null ? System.getProperty("config") : "config.json";
+
     public static List<GameConfiguration> load() {
-        Path configPath = Paths.get("config.json");
+        Path configPath = Paths.get(CONFIG_PATH);
         if (!Files.exists(configPath)) {
             return Collections.emptyList();
         }
