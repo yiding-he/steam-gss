@@ -1,9 +1,11 @@
 package com.hyd.steamgss.ui;
 
 import com.hyd.steamgss.utils.Pth;
+import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
@@ -47,13 +49,9 @@ public class FileField extends HBox {
         });
 
         textField.textProperty().addListener((_ob, _old, _new) -> {
-            if (!Pth.fileExists(_new)) {
-                this.chosenFile = null;
-            } else {
-                this.chosenFile = new File(_new);
-                if (onChosenFileChanged != null) {
-                    onChosenFileChanged.run();
-                }
+            this.chosenFile = new File(_new);
+            if (onChosenFileChanged != null) {
+                onChosenFileChanged.run();
             }
         });
     }

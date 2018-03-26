@@ -1,5 +1,6 @@
 package com.hyd.steamgss.items;
 
+import com.hyd.steamgss.App;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
@@ -12,6 +13,20 @@ public class GameConfiguration {
     private SimpleStringProperty localSavingPath = new SimpleStringProperty();
 
     private SimpleStringProperty backupPath = new SimpleStringProperty();
+
+    public GameConfiguration() {
+    }
+
+    private GameConfiguration(String name, String localSavingPath, String backupPath) {
+        this.name.set(name);
+        this.localSavingPath.set(localSavingPath);
+        this.backupPath.set(backupPath);
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public GameConfiguration clone(){
+        return new GameConfiguration(this.name.get(), this.localSavingPath.get(), this.backupPath.get());
+    }
 
     public SimpleStringProperty nameProperty() {
         return name;
@@ -47,5 +62,17 @@ public class GameConfiguration {
 
     public void setBackupPath(String backupPath) {
         this.backupPath.set(backupPath);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    public void escapePath() {
+        this.localSavingPath.set(this.localSavingPath.get().replace(App.USER_HOME, "%USERPROFILE%"));
+        this.backupPath.set(this.backupPath.get().replace(App.USER_HOME, "%USERPROFILE%"));
+    }
+
+    public void unescapePath() {
+        this.localSavingPath.set(this.localSavingPath.get().replace("%USERPROFILE%", App.USER_HOME));
+        this.backupPath.set(this.backupPath.get().replace("%USERPROFILE%", App.USER_HOME));
     }
 }
