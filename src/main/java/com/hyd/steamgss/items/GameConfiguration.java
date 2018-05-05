@@ -8,11 +8,11 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class GameConfiguration {
 
-    private SimpleStringProperty name = new SimpleStringProperty();
+    private SimpleStringProperty name = new SimpleStringProperty("");
 
-    private SimpleStringProperty localSavingPath = new SimpleStringProperty();
+    private SimpleStringProperty localSavingPath = new SimpleStringProperty("");
 
-    private SimpleStringProperty backupPath = new SimpleStringProperty();
+    private SimpleStringProperty backupPath = new SimpleStringProperty("");
 
     public GameConfiguration() {
     }
