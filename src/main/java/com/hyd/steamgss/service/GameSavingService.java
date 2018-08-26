@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,43 +60,49 @@ public class GameSavingService {
             return;
         }
 
+        List<String> errors = new ArrayList<>();
+        List<GameConfiguration> availables = new ArrayList<>();
+
         for (GameConfiguration configuration : configurations) {
             String backupPath = configuration.getBackupPath();
             String savingPath = configuration.getLocalSavingPath();
 
             if (Str.isBlank(backupPath)) {
-                FxAlert.error("'" + configuration.getName() + "'没有选择备份目录");
-                return;
+                errors.add("'" + configuration.getName() + "'没有选择备份目录");
+                continue;
             }
 
             if (Str.isBlank(savingPath)) {
-                FxAlert.error("'" + configuration.getName() + "'没有选择存档目录");
-                return;
+                errors.add("'" + configuration.getName() + "'没有选择存档目录");
+                continue;
             }
 
             if (!Pth.fileExists(savingPath)) {
-                FxAlert.error("'" + configuration.getName() + "'存档没有找到");
-                return;
+                errors.add("'" + configuration.getName() + "'存档没有找到");
+                continue;
             }
 
             if (!Pth.getOrCreateDir(backupPath)) {
-                FxAlert.error("'" + configuration.getName() + "'备份目录无法创建");
-                return;
+                errors.add("'" + configuration.getName() + "'备份目录无法创建");
+                continue;
             }
+
+            availables.add(configuration);
         }
 
-        ImageView imageView = configurations.size() > 1 ? loadingAllImageView : loadingImageView;
+        ImageView imageView = availables.size() > 1 ? loadingAllImageView : loadingImageView;
         Runnable task = () -> {
 
             serviceRunning(true, imageView);
 
             try {
-                for (GameConfiguration configuration : configurations) {
+                for (GameConfiguration configuration : availables) {
                     String backupPath = configuration.getBackupPath();
                     String savingPath = configuration.getLocalSavingPath();
                     Pth.copyDir(savingPath, backupPath);
                 }
-                FxAlert.info("备份已完成。");
+                errors.add(0, "备份已完成。");
+                FxAlert.info(String.join("\n", errors));
             } catch (IOException e) {
                 FxAlert.error("备份失败：" + e);
             } finally {
