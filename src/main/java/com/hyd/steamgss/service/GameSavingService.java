@@ -4,7 +4,6 @@ import com.hyd.steamgss.fx.Fx;
 import com.hyd.steamgss.fx.FxAlert;
 import com.hyd.steamgss.items.GameConfiguration;
 import com.hyd.steamgss.utils.Pth;
-import com.hyd.steamgss.utils.Str;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
@@ -62,33 +61,7 @@ public class GameSavingService {
 
         List<String> errors = new ArrayList<>();
         List<GameConfiguration> availables = new ArrayList<>();
-
-        for (GameConfiguration configuration : configurations) {
-            String backupPath = configuration.getBackupPath();
-            String savingPath = configuration.getLocalSavingPath();
-
-            if (Str.isBlank(backupPath)) {
-                errors.add("'" + configuration.getName() + "'没有选择备份目录");
-                continue;
-            }
-
-            if (Str.isBlank(savingPath)) {
-                errors.add("'" + configuration.getName() + "'没有选择存档目录");
-                continue;
-            }
-
-            if (!Pth.fileExists(savingPath)) {
-                errors.add("'" + configuration.getName() + "'存档没有找到");
-                continue;
-            }
-
-            if (!Pth.getOrCreateDir(backupPath)) {
-                errors.add("'" + configuration.getName() + "'备份目录无法创建");
-                continue;
-            }
-
-            availables.add(configuration);
-        }
+        checkConfigurations(configurations, errors, availables);
 
         ImageView imageView = availables.size() > 1 ? loadingAllImageView : loadingImageView;
         Runnable task = () -> {
@@ -113,36 +86,26 @@ public class GameSavingService {
         new Thread(task).start();
     }
 
+    private static void checkConfigurations(List<GameConfiguration> configurations, List<String> errors, List<GameConfiguration> availables) {
+        for (GameConfiguration configuration : configurations) {
+            String validate = configuration.validate();
+            if (validate == null) {
+                availables.add(configuration);
+            } else {
+                errors.add(validate);
+            }
+        }
+    }
+
     public static void restoreSaving(List<GameConfiguration> configurations) {
         if (configurations == null || configurations.isEmpty()) {
             FxAlert.error("没有选择要备份的游戏");
             return;
         }
 
-        for (GameConfiguration configuration : configurations) {
-            String backupPath = configuration.getBackupPath();
-            String savingPath = configuration.getLocalSavingPath();
-
-            if (Str.isBlank(backupPath)) {
-                FxAlert.error("'" + configuration.getName() + "'没有选择备份目录");
-                return;
-            }
-
-            if (Str.isBlank(savingPath)) {
-                FxAlert.error("'" + configuration.getName() + "'没有选择存档目录");
-                return;
-            }
-
-            if (!Pth.fileExists(backupPath)) {
-                FxAlert.error("'" + configuration.getName() + "'备份没有找到");
-                return;
-            }
-
-            if (!Pth.getOrCreateDir(savingPath)) {
-                FxAlert.error("'" + configuration.getName() + "'存档目录无法创建");
-                return;
-            }
-        }
+        List<String> errors = new ArrayList<>();
+        List<GameConfiguration> availables = new ArrayList<>();
+        checkConfigurations(configurations, errors, availables);
 
         ImageView imageView = configurations.size() > 1 ? loadingAllImageView : loadingImageView;
         Runnable task = () -> {
@@ -150,12 +113,13 @@ public class GameSavingService {
             serviceRunning(true, imageView);
 
             try {
-                for (GameConfiguration configuration : configurations) {
+                for (GameConfiguration configuration : availables) {
                     String backupPath = configuration.getBackupPath();
                     String savingPath = configuration.getLocalSavingPath();
                     Pth.copyDir(backupPath, savingPath);
                 }
-                FxAlert.info("存档已还原。");
+                errors.add(0, "存档已还原。");
+                FxAlert.info(String.join("\n", errors));
             } catch (IOException e) {
                 FxAlert.error("还原失败：" + e);
             } finally {

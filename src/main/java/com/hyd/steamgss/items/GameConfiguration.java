@@ -1,6 +1,9 @@
 package com.hyd.steamgss.items;
 
 import com.hyd.steamgss.App;
+import com.hyd.steamgss.fx.FxAlert;
+import com.hyd.steamgss.utils.Pth;
+import com.hyd.steamgss.utils.Str;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
@@ -24,7 +27,7 @@ public class GameConfiguration {
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public GameConfiguration clone(){
+    public GameConfiguration clone() {
         return new GameConfiguration(this.name.get(), this.localSavingPath.get(), this.backupPath.get());
     }
 
@@ -74,5 +77,30 @@ public class GameConfiguration {
     public void unescapePath() {
         this.localSavingPath.set(this.localSavingPath.get().replace("%USERPROFILE%", App.USER_HOME));
         this.backupPath.set(this.backupPath.get().replace("%USERPROFILE%", App.USER_HOME));
+    }
+
+    public String validate() {
+
+        String backupPath = this.getBackupPath();
+        String savingPath = this.getLocalSavingPath();
+        String name = this.getName();
+
+        if (Str.isBlank(backupPath)) {
+            return "'" + name + "'没有选择备份目录";
+        }
+
+        if (Str.isBlank(savingPath)) {
+            return "'" + name + "'没有选择存档目录";
+        }
+
+        if (!Pth.fileExists(backupPath)) {
+            return "'" + name + "'备份没有找到";
+        }
+
+        if (!Pth.getOrCreateDir(savingPath)) {
+            return "'" + name + "'存档目录无法创建";
+        }
+
+        return null;
     }
 }
