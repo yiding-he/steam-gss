@@ -61,7 +61,7 @@ public class GameSavingService {
 
         List<String> errors = new ArrayList<>();
         List<GameConfiguration> availables = new ArrayList<>();
-        checkConfigurations(configurations, errors, availables);
+        checkConfigurations(CheckType.Saving, configurations, errors, availables);
 
         ImageView imageView = availables.size() > 1 ? loadingAllImageView : loadingImageView;
         Runnable task = () -> {
@@ -86,9 +86,17 @@ public class GameSavingService {
         new Thread(task).start();
     }
 
-    private static void checkConfigurations(List<GameConfiguration> configurations, List<String> errors, List<GameConfiguration> availables) {
+    private static void checkConfigurations(
+            CheckType checkType,
+            List<GameConfiguration> configurations,
+            List<String> errors,
+            List<GameConfiguration> availables) {
+
         for (GameConfiguration configuration : configurations) {
-            String validate = configuration.validate();
+
+            String validate = checkType == CheckType.Saving ?
+                    configuration.validateSaving(): configuration.validateBackup();
+
             if (validate == null) {
                 availables.add(configuration);
             } else {
@@ -105,7 +113,7 @@ public class GameSavingService {
 
         List<String> errors = new ArrayList<>();
         List<GameConfiguration> availables = new ArrayList<>();
-        checkConfigurations(configurations, errors, availables);
+        checkConfigurations(CheckType.Backup, configurations, errors, availables);
 
         ImageView imageView = configurations.size() > 1 ? loadingAllImageView : loadingImageView;
         Runnable task = () -> {
@@ -130,4 +138,7 @@ public class GameSavingService {
         new Thread(task).start();
     }
 
+    private enum CheckType {
+        Saving, Backup
+    }
 }

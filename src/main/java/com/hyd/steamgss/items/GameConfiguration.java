@@ -79,7 +79,30 @@ public class GameConfiguration {
         this.backupPath.set(this.backupPath.get().replace("%USERPROFILE%", App.USER_HOME));
     }
 
-    public String validate() {
+    // 检查存档是否存在
+    public String validateSaving() {
+
+        String backupPath = this.getBackupPath();
+        String savingPath = this.getLocalSavingPath();
+        String name = this.getName();
+
+        if (Str.isBlank(backupPath)) {
+            return "'" + name + "'没有选择备份目录";
+        }
+
+        if (Str.isBlank(savingPath)) {
+            return "'" + name + "'没有选择存档目录";
+        }
+
+        if (!Pth.getOrCreateDir(savingPath)) {
+            return "'" + name + "'存档目录无法创建";
+        }
+
+        return null;
+    }
+
+    // 检查备份是否存在
+    public String validateBackup() {
 
         String backupPath = this.getBackupPath();
         String savingPath = this.getLocalSavingPath();
@@ -95,10 +118,6 @@ public class GameConfiguration {
 
         if (!Pth.fileExists(backupPath)) {
             return "'" + name + "'备份没有找到";
-        }
-
-        if (!Pth.getOrCreateDir(savingPath)) {
-            return "'" + name + "'存档目录无法创建";
         }
 
         return null;
